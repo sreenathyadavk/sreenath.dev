@@ -17,10 +17,10 @@
     --font-code: 'Fira Code', 'Courier New', monospace;
     /* For subtle tech feel */
 
-    /* Spacing - Increased for authority */
+    /* Spacing - Balanced */
     --container-width: 1200px;
     --header-height: 90px;
-    --section-spacing: 180px;
+    --section-spacing: 80px;
 
     /* Transitions */
     --transition-fast: 0.2s ease;
@@ -213,6 +213,7 @@ p {
     background: linear-gradient(90deg, #f5f5f5, #93c5fd, #f5f5f5);
     background-size: 200% auto;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: shine 8s linear infinite;
 }
