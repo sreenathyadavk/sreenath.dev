@@ -220,11 +220,11 @@ document.addEventListener('DOMContentLoaded', () => {
      -------------------------------------------------------- */
   const termLines = [
     { id: 'terminal-line-1', text: '$ whoami', cls: 'bone' },
-    { id: 'terminal-line-2', text: 'sreenath-yadav', cls: 'muted' },
+    { id: 'terminal-line-2', text: 'sreenath', cls: 'muted' },
     { id: 'terminal-line-3', text: '$ cat stack.txt', cls: 'bone' },
-    { id: 'terminal-line-4', text: 'java spring python vue next.js', cls: 'muted' },
-    { id: 'terminal-line-5', text: '$ echo $STATUS', cls: 'bone' },
-    { id: 'terminal-line-6', text: '→ open to work', cls: 'ember' },
+    { id: 'terminal-line-4', text: 'autonomous-systems ai-orchestration edge-compute architecture', cls: 'muted' },
+    { id: 'terminal-line-5', text: '$ status', cls: 'bone' },
+    { id: 'terminal-line-6', text: '→ building', cls: 'ember' },
   ];
 
   function typeTerminal() {
