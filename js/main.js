@@ -263,32 +263,45 @@ document.addEventListener('DOMContentLoaded', () => {
     termTex.minFilter = THREE.LinearFilter;
 
     const tLines = [
-      "kernel_boot --secure",
-      "> Initializing autonomous subroutines...",
-      "> Allocating shared memory [2048MB]",
-      "> Fetching embedded artifacts...",
-      "> Synching distributed state...",
-      "> Establishing secure channels...",
-      "> Routing traffic to local enclave...",
-      "> System nominal. Ready."
+      "> Initializing autonomous sub-agents...",
+      "Agent: Vector database connection established.",
+      "> Loading local inference engine...",
+      "Model: Pipeline running on port 11434.",
+      "> Establishing secure HTTP tunnel...",
+      "Success: All layers online and operational."
     ];
     let currentTLine = 0;
     let currentChar = 0;
     let typedText = [];
     
     function drawTerminal() {
-      termCtx.fillStyle = "#0b0d0f";
+      // Background
+      termCtx.fillStyle = "#111315";
       termCtx.fillRect(0, 0, 512, 256);
-      termCtx.font = "20px monospace";
       
-      let y = 30;
+      // Top Bar Dots
+      termCtx.fillStyle = "#262b30";
+      termCtx.beginPath(); termCtx.arc(24, 20, 5, 0, Math.PI * 2); termCtx.fill();
+      termCtx.beginPath(); termCtx.arc(40, 20, 5, 0, Math.PI * 2); termCtx.fill();
+      termCtx.fillStyle = "rgba(249, 115, 22, 0.7)";
+      termCtx.beginPath(); termCtx.arc(56, 20, 5, 0, Math.PI * 2); termCtx.fill();
+
+      // Top Bar Text
+      termCtx.font = "12px monospace";
+      termCtx.fillStyle = "#6b7280";
+      termCtx.fillText("BASH", 72, 24);
+
+      // Text
+      termCtx.font = "16px monospace";
+      
+      let y = 64;
       for (let i = 0; i < typedText.length; i++) {
          if (i === typedText.length - 1 && currentTLine >= tLines.length) {
-            termCtx.fillStyle = "#f97316"; 
-         } else if (i === typedText.length - 1) {
-            termCtx.fillStyle = "#f4f4f5"; 
+            termCtx.fillStyle = "#f97316"; // Ember
+         } else if (typedText[i].startsWith(">")) {
+            termCtx.fillStyle = "#6b7280"; // Muted
          } else {
-            termCtx.fillStyle = "#6b7280"; 
+            termCtx.fillStyle = "#f4f4f5"; // Bone
          }
          termCtx.fillText(typedText[i], 20, y);
          y += 28;
