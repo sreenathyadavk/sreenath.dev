@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color:#0b0d0f">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="theme-color" content="#0b0d0f"/>
+  <meta name="color-scheme" content="dark"/>
+  <title>AI Meeting Tracker · Sreenath Yadav</title>
+  <meta name="description" content="Private meeting intelligence with local transcription, task extraction and conversational analysis."/>
+
+  <link rel="stylesheet" href="../css/global.css"/>
+  <link rel="stylesheet" href="../css/home.css"/>
+  <link rel="stylesheet" href="../css/project.css"/>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <!-- ========== HEADER ========== -->
+  <header class="site-header" id="site-header">
+    <nav class="container nav">
+      <a class="nav-logo" aria-label="Home" href="../">sreenath<span class="dot">.</span>yadav</a>
+      <div class="nav-links">
+        <a class="nav-link" href="./">
+          <span class="nav-link-num">01</span>Projects
+        </a>
+        <a class="nav-link" href="../#capabilities">
+          <span class="nav-link-num">02</span>Work
+        </a>
+        <a class="nav-link" href="../#about">
+          <span class="nav-link-num">03</span>About
+        </a>
+      </div>
+      <div class="nav-actions">
+        <a class="nav-resume" href="https://github.com/sreenathyadavk" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a class="nav-cta" href="mailto:placeholder@email.com">Get in touch</a>
+        <button class="hamburger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu" id="hamburger-btn">
+          <span class="hamburger-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </nav>
+    <div class="mobile-menu" id="mobile-menu">
+      <div class="mobile-menu-inner">
+        <div class="mobile-menu-items">
+          <a class="mobile-menu-link" href="./"><span class="nav-link-num">01</span>Projects</a>
+          <a class="mobile-menu-link" href="../#capabilities"><span class="nav-link-num">02</span>Work</a>
+          <a class="mobile-menu-link" href="../#about"><span class="nav-link-num">03</span>About</a>
+          <a class="mobile-menu-link" href="https://github.com/sreenathyadavk" target="_blank"><span class="nav-link-num">04</span>GitHub</a>
+          <a class="mobile-menu-cta" href="mailto:placeholder@email.com">Get in touch</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MAIN ========== -->
+  <main id="main-content" tabindex="-1" style="outline:none;">
+
+    <article class="section" style="padding-top:8rem; padding-bottom:6rem;">
+      <div class="container project-header">
+        
+        <a class="back-link" href="./">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="m15 18-6-6 6-6"/></svg>
+          All projects
+        </a>
+
+        <div class="project-meta-row blur-in">
+          <span class="project-meta-year">2025</span>
+          <span class="project-meta-sep"></span>
+          <span class="text-muted">Applied AI</span>
+        </div>
+
+        <h1 class="project-title text-reveal">AI Meeting Tracker</h1>
+
+        <p class="project-subtitle slide-left">
+          Record a meeting, get the transcript, pull out the tasks, and ask questions about what was said — entirely locally.
+        </p>
+
+        <div class="project-links blur-in">
+          <a href="https://github.com/sreenathyadavk/AI-Meeting-Tracker" target="_blank" rel="noopener noreferrer" class="project-link-repo">
+            GitHub Repo
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Hero image -->
+      <div class="project-hero-image container">
+        <div class="project-hero-image-inner scale-up">
+          <div class="project-image-wrapper tilt-card">
+            <div class="project-image-glow parallax-slow" aria-hidden="true"></div>
+            <div class="project-image-frame glow-hover">
+              <div class="card-browser-bar">
+                <span class="card-dot"></span><span class="card-dot"></span><span class="card-dot"></span>
+                <span class="card-url">localhost:5173/meetings</span>
+              </div>
+              <div class="project-screenshot">
+                <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);color:var(--muted);background:var(--surface);">Meeting Tracker Vue Dashboard</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container project-content-grid">
+
+        <!-- Narrative -->
+        <div class="project-narrative stagger-cascade">
+          <div>
+            <h3>The Objective</h3>
+            <p>Cloud-based meeting transcription services (like Otter.ai) require sending sensitive internal corporate audio over the internet to third parties. I built the AI Meeting Tracker to solve this: it is a 100% self-hosted, no-cloud meeting intelligence system that transcribes and analyzes meetings strictly on your own machine.</p>
+          </div>
+          <div>
+            <h3>Architecture</h3>
+            <p>The system is a full-stack web application. The frontend is built in <strong>Vue 3</strong> for a reactive dashboard experience. The backend uses <strong>FastAPI</strong> and <strong>SQLAlchemy</strong> to manage data models, backed by a persistent SQLite database for fast local storage.</p>
+          </div>
+          <div>
+            <h3>Local AI Orchestration</h3>
+            <p>Audio is ingested and transcribed locally using OpenAI's <strong>Whisper</strong> model. Once transcribed, the backend pipes the raw text to a locally running instance of <strong>Ollama (Llama 3.1)</strong>. The LLM is prompted strictly to extract structured JSON containing action items, owners, deadlines, and a confidence score for each extracted task.</p>
+          </div>
+          <div>
+            <h3>Engineering Challenges</h3>
+            <p>The core challenge was forcing a local LLM to consistently return valid, structured JSON schemas without hallucinating or diverging into conversational responses. I achieved this through rigid prompting techniques and backend schema validation before the data is committed to SQLite and sent to the Vue frontend.</p>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="project-sidebar slide-right">
+          <div class="sidebar-section">
+            <span class="section-label">
+              <span class="section-label-line" aria-hidden="true"></span>
+              role
+            </span>
+            <div class="sidebar-value">Full-Stack<br/>Applied AI</div>
+          </div>
+
+          <div class="sidebar-section">
+            <span class="section-label">
+              <span class="section-label-line" aria-hidden="true"></span>
+              status
+            </span>
+            <div class="sidebar-value">Completed</div>
+          </div>
+
+          <div class="sidebar-section">
+            <span class="section-label">
+              <span class="section-label-line" aria-hidden="true"></span>
+              technology
+            </span>
+            <div class="tech-tags">
+              <span class="tech-tag">Vue 3</span>
+              <span class="tech-tag">FastAPI</span>
+              <span class="tech-tag">SQLite</span>
+              <span class="tech-tag">Whisper</span>
+              <span class="tech-tag">Ollama (Llama 3.1)</span>
+              <span class="tech-tag">Python</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Next project -->
+      <div class="container next-project blur-in">
+        <a class="next-project-link" href="./nimbus.html">
+          <span class="next-project-label">Next project</span>
+          <span class="next-project-name">
+            Nimbus
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </span>
+        </a>
+      </div>
+    </article>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <a class="nav-logo" href="../">sreenath<span class="dot">.</span>yadav</a>
+          <p class="footer-tagline">Software Engineer &amp; AI Developer, India</p>
+        </div>
+        <nav class="footer-nav" aria-label="Footer">
+          <a href="./">Projects</a>
+          <a href="../#capabilities">Work</a>
+          <a href="../#about">About</a>
+        </nav>
+        <div class="footer-socials">
+          <a href="https://github.com/sreenathyadavk" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="mailto:placeholder@email.com">Email</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Sreenath Yadav</span>
+        <span>Designed and built from scratch.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
