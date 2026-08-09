@@ -85,8 +85,20 @@
                 <span class="card-dot"></span><span class="card-dot"></span><span class="card-dot"></span>
                 <span class="card-url">localhost:5173/meetings</span>
               </div>
-              <div class="project-screenshot">
-                <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);color:var(--muted);background:var(--surface);">Meeting Tracker Vue Dashboard</div>
+              <div class="project-screenshot" style="padding: 0;">
+                <div style="width:100%; height:100%; background:#0b0d0f; border-radius:inherit; padding:1.5rem; box-sizing:border-box; font-family:var(--font-mono); font-size:0.875rem; display:flex; flex-direction:column; justify-content:flex-start; overflow:hidden; position:relative;">
+                  
+                  <div style="position:absolute; top:0; left:0; right:0; height:2.5rem; background:#111315; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; padding:0 1rem; gap:0.5rem;">
+                     <span style="width:10px; height:10px; border-radius:50%; background:#ff4d4d;"></span>
+                     <span style="width:10px; height:10px; border-radius:50%; background:#fbbc05;"></span>
+                     <span style="width:10px; height:10px; border-radius:50%; background:#34a853;"></span>
+                     <span style="margin-left:0.75rem; color:var(--muted); font-size:0.75rem;">meeting_tracker.log</span>
+                  </div>
+
+                  <div id="ai-meeting-tracker-logs" style="display:flex; flex-direction:column; gap:0.6rem; margin-top:3rem;">
+                    <!-- Populated by JS -->
+                  </div>
+                </div>
               </div>
             </div>
           </div>

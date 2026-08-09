@@ -502,3 +502,140 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+
+
+  /* --------------------------------------------------------
+     13. TERMINAL ANIMATIONS (All Projects)
+     -------------------------------------------------------- */
+  function createTerminalAnimation(containerId, logs) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color || "var(--muted)";
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        container.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        container.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay || 500);
+      }
+    }
+    
+    function resetAnimation() {
+      container.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(container);
+  }
+
+  // WHIS
+  createTerminalAnimation("whis-logs", [
+    { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+    { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+    { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+    { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+    { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+    { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+    { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+    { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+  ]);
+
+  // AegisCore
+  createTerminalAnimation("aegiscore-logs", [
+    { text: "[HTTP 200] /api/v1/auth/verify - 12ms", color: "var(--muted)", delay: 300 },
+    { text: "[HTTP 200] /api/v1/users/me - 24ms", color: "var(--muted)", delay: 400 },
+    { text: "[HTTP 200] /api/v1/data/sync - 41ms", color: "var(--muted)", delay: 600 },
+    { text: "Incoming request: /api/v1/query?q=SELECT+*", color: "var(--bone)", delay: 800 },
+    { text: "> [AegisCore] Analyzing semantic payload...", color: "var(--muted)", delay: 600 },
+    { text: "> [AegisCore] Generating request embedding...", color: "var(--muted)", delay: 500 },
+    { text: "[WARN] Suspicious semantic payload detected.", color: "#fbbc05", delay: 800 },
+    { text: "[BLOCK] Embedding anomaly score: 0.94 -> connection dropped.", color: "var(--ember)", delay: 1000, type: true }
+  ]);
+
+  // HiddenLayer
+  createTerminalAnimation("hiddenlayer-logs", [
+    { text: "> Initializing CameraX stream...", color: "var(--muted)", delay: 400 },
+    { text: "> Loading TFLite face-mesh model...", color: "var(--muted)", delay: 600 },
+    { text: "> Capturing video frame 402...", color: "var(--bone)", delay: 800 },
+    { text: "> Running TFLite inference pipeline...", color: "var(--muted)", delay: 900 },
+    { text: "> Extracting spatial frequencies...", color: "var(--muted)", delay: 500 },
+    { text: "[!] Spatial anomalies found in facial mesh region.", color: "#fbbc05", delay: 800 },
+    { text: "RESULT: Deepfake Detected (92% Confidence). Media rejected.", color: "var(--ember)", delay: 1000, type: true }
+  ]);
+
+  // AI Meeting Tracker
+  createTerminalAnimation("ai-meeting-tracker-logs", [
+    { text: "> Connecting to local audio stream...", color: "var(--muted)", delay: 400 },
+    { text: "> Whisper.cpp: Transcribing stream...", color: "var(--muted)", delay: 1200 },
+    { text: "Audio: \"I will finish the backend migration by tomorrow.\"", color: "var(--bone)", delay: 1000 },
+    { text: "> Running local NLP extraction pipeline...", color: "var(--muted)", delay: 800 },
+    { text: "> Parsing entities and action items...", color: "var(--muted)", delay: 600 },
+    { text: "[TASK ADDED]: \"Finish backend migration\" (Due: Tomorrow)", color: "var(--ember)", delay: 1000, type: true }
+  ]);
+
+  // Nimbus
+  createTerminalAnimation("nimbus-logs", [
+    { text: "> [NimbusSync] Listening on port 443...", color: "var(--muted)", delay: 400 },
+    { text: "> Incoming payload from Android Client (Device: Pixel 8)", color: "var(--bone)", delay: 800 },
+    { text: "> Allocating stream buffer...", color: "var(--muted)", delay: 500 },
+    { text: "> Uploading IMG_8042.jpg [====      ] 40%", color: "var(--muted)", delay: 400 },
+    { text: "> Uploading IMG_8042.jpg [========  ] 80%", color: "var(--muted)", delay: 400 },
+    { text: "> Uploading IMG_8042.jpg [==========] 100%", color: "var(--muted)", delay: 600 },
+    { text: "> Generating WebP thumbnails (128px, 512px)...", color: "var(--muted)", delay: 700 },
+    { text: "Success: Asset saved. SQLite index updated.", color: "var(--ember)", delay: 1000, type: true }
+  ]);
+
+  // CRM Demo
+  createTerminalAnimation("crm-demo-logs", [
+    { text: "> Connecting to PostgreSQL cluster...", color: "var(--muted)", delay: 400 },
+    { text: "> Validating current schema state (v2)...", color: "var(--muted)", delay: 600 },
+    { text: "> Applying migration: V3__Update_Workflows.sql", color: "var(--bone)", delay: 1000 },
+    { text: "> Altering table: customer_records...", color: "var(--muted)", delay: 800 },
+    { text: "> Altering table: team_workflows...", color: "var(--muted)", delay: 700 },
+    { text: "> Building new indexes...", color: "var(--muted)", delay: 900 },
+    { text: "> 4,021 customer records updated successfully.", color: "var(--muted)", delay: 600 },
+    { text: "Migration complete. Workflow engine restarted. [OK]", color: "var(--ember)", delay: 1000, type: true }
+  ]);
+
+});
