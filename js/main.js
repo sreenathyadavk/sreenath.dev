@@ -638,4 +638,41 @@ document.addEventListener('DOMContentLoaded', () => {
     { text: "Migration complete. Workflow engine restarted. [OK]", color: "var(--ember)", delay: 1000, type: true }
   ]);
 
-});
+
+
+  /* --------------------------------------------------------
+     14. CUSTOM CURSOR
+     -------------------------------------------------------- */
+  if (window.matchMedia("(pointer: fine)").matches) {
+    const cursorDot = document.createElement("div");
+    cursorDot.classList.add("cursor-dot");
+    const cursorCircle = document.createElement("div");
+    cursorCircle.classList.add("cursor-circle");
+    document.body.appendChild(cursorDot);
+    document.body.appendChild(cursorCircle);
+
+    let mouseX = 0, mouseY = 0;
+    let circleX = 0, circleY = 0;
+
+    window.addEventListener("mousemove", (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursorDot.style.left = mouseX + "px";
+      cursorDot.style.top = mouseY + "px";
+    });
+
+    function animateCursor() {
+      circleX += (mouseX - circleX) * 0.2;
+      circleY += (mouseY - circleY) * 0.2;
+      cursorCircle.style.left = circleX + "px";
+      cursorCircle.style.top = circleY + "px";
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    const interactables = document.querySelectorAll("a, button, .tilt-card, .magnetic, .nav-logo");
+    interactables.forEach(el => {
+      el.addEventListener("mouseenter", () => document.body.classList.add("cursor-hover"));
+      el.addEventListener("mouseleave", () => document.body.classList.remove("cursor-hover"));
+    });
+  }

@@ -718,3 +718,46 @@ button { font: inherit; cursor: pointer; border: none; background: none; color: 
   }
   .reveal { opacity: 1; transform: none; }
 }
+
+
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+@media (pointer: fine) {
+  body, a, button, .magnetic, .tilt-card {
+    cursor: none;
+  }
+  
+  .cursor-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--ember);
+    border-radius: 50%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+  }
+
+  .cursor-circle {
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(249, 115, 22, 0.5); /* Ember */
+    border-radius: 50%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
+  }
+
+  body.cursor-hover .cursor-circle {
+    width: 48px;
+    height: 48px;
+    background-color: rgba(249, 115, 22, 0.1);
+  }
+}
