@@ -471,7 +471,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentLog = 0;
     
     function appendNextLog() {
-      if (currentLog >= logs.length) return;
+      if (currentLog >= logs.length) {
+        setTimeout(resetAnimation, 4000);
+        return;
+      }
       
       const logData = logs[currentLog];
       const div = document.createElement("div");
@@ -493,7 +496,8 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(typeChar, 25);
           } else {
             div.textContent = logData.text; 
-            setTimeout(resetAnimation, 6000); 
+            currentLog++;
+            setTimeout(appendNextLog, logData.delay || 500);
           }
         }
         typeChar();
