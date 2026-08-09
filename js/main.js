@@ -216,49 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* --------------------------------------------------------
-     10. TERMINAL TYPING ANIMATION
-     -------------------------------------------------------- */
-  const termLines = [
-    { id: 'terminal-line-1', text: '$ whoami', cls: 'bone' },
-    { id: 'terminal-line-2', text: 'sreenath', cls: 'muted' },
-    { id: 'terminal-line-3', text: '$ cat stack.txt', cls: 'bone' },
-    { id: 'terminal-line-4', text: 'autonomous-systems ai-orchestration edge-compute architecture', cls: 'muted' },
-    { id: 'terminal-line-5', text: '$ status', cls: 'bone' },
-    { id: 'terminal-line-6', text: '→ building', cls: 'ember' },
-  ];
-
-  function typeTerminal() {
-    let lineIdx = 0;
-    let charIdx = 0;
-    const line1El = document.getElementById('terminal-line-1');
-    if (!line1El) return;
-
-    line1El.innerHTML = '';
-
-    function typeChar() {
-      if (lineIdx >= termLines.length) return;
-
-      const current = termLines[lineIdx];
-      const el = document.getElementById(current.id);
-      if (!el) return;
-
-      if (charIdx < current.text.length) {
-        el.textContent = current.text.slice(0, charIdx + 1);
-        charIdx++;
-        setTimeout(typeChar, 35 + Math.random() * 25);
-      } else {
-        lineIdx++;
-        charIdx = 0;
-        setTimeout(typeChar, 300);
-      }
-    }
-
-    setTimeout(typeChar, 800);
-  }
-
-  typeTerminal();
-
-  /* --------------------------------------------------------
      11. THREE.JS HERO VISUAL
      -------------------------------------------------------- */
   const canvasContainer = document.getElementById('hero-canvas-container');
@@ -637,6 +594,17 @@ document.addEventListener('DOMContentLoaded', () => {
     { text: "> 4,021 customer records updated successfully.", color: "var(--muted)", delay: 600 },
     { text: "Migration complete. Workflow engine restarted. [OK]", color: "var(--ember)", delay: 1000, type: true }
   ]);
+
+  // Hero Terminal
+  createTerminalAnimation("hero-terminal-logs", [
+    { text: "$ boot --profile sreenath", color: "var(--muted)", delay: 800, type: true },
+    { text: "  interface ............. [ok]", color: "var(--bone)", delay: 300 },
+    { text: "  application ........... [ok]", color: "var(--bone)", delay: 300 },
+    { text: "  backend ............... [ok]", color: "var(--bone)", delay: 500 },
+    { text: "  systems ............... [ok]", color: "var(--bone)", delay: 700 },
+    { text: "→ all layers online", color: "var(--ember)", delay: 5000, type: true }
+  ]);
+
 
 
 
