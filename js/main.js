@@ -601,11 +601,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Hero Terminal
   createTerminalAnimation("hero-terminal-logs", [
-    { text: "$ boot --profile sreenath", color: "var(--muted)", delay: 800, type: true },
-    { text: "  interface ............. [ok]", color: "var(--bone)", delay: 300 },
-    { text: "  application ........... [ok]", color: "var(--bone)", delay: 300 },
-    { text: "  backend ............... [ok]", color: "var(--bone)", delay: 500 },
-    { text: "  systems ............... [ok]", color: "var(--bone)", delay: 700 },
+    { text: "$ boot --profile sreenath", color: "var(--muted)", delay: 300, type: true },
+    { text: "  interface ............. [ok]", color: "var(--bone)", delay: 100, type: true },
+    { text: "  application ........... [ok]", color: "var(--bone)", delay: 100, type: true },
+    { text: "  backend ............... [ok]", color: "var(--bone)", delay: 100, type: true },
+    { text: "  systems ............... [ok]", color: "var(--bone)", delay: 100, type: true },
     { text: "→ all layers online", color: "var(--ember)", delay: 5000, type: true }
   ]);
 
