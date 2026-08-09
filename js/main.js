@@ -19,7 +19,82 @@ document.addEventListener('DOMContentLoaded', () => {
     const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
     progressBar.style.width = progress + '%';
   }
-  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('scroll', updateProgress, { passive: true 
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
 
   /* --------------------------------------------------------
      1. HEADER SCROLL BEHAVIOUR
@@ -32,11 +107,161 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(() => {
           header.classList.toggle('scrolled', window.scrollY > 20);
           ticking = false;
-        });
+        
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
         ticking = true;
       }
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true 
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
     onScroll();
   }
 
@@ -49,13 +274,238 @@ document.addEventListener('DOMContentLoaded', () => {
     hamburger.addEventListener('click', () => {
       const isOpen = mobileMenu.classList.toggle('open');
       hamburger.setAttribute('aria-expanded', String(isOpen));
-    });
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
     mobileMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         mobileMenu.classList.remove('open');
         hamburger.setAttribute('aria-expanded', 'false');
-      });
-    });
+      
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
   }
 
   /* --------------------------------------------------------
@@ -79,8 +529,158 @@ document.addEventListener('DOMContentLoaded', () => {
           entry.target.classList.add('visible');
           observer.unobserve(entry.target);
         }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+      
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
+    }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' 
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
 
     animatedEls.forEach(el => observer.observe(el));
   } else {
@@ -105,8 +705,158 @@ document.addEventListener('DOMContentLoaded', () => {
       if (i < words.length - 1) {
         el.appendChild(document.createTextNode(' '));
       }
-    });
-  });
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
+  
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
 
   /* --------------------------------------------------------
      5. SCROLL INDICATOR FADE
@@ -116,7 +866,82 @@ document.addEventListener('DOMContentLoaded', () => {
     const fadeScroll = () => {
       scrollIndicator.style.opacity = window.scrollY > 100 ? '0' : '0.8';
     };
-    window.addEventListener('scroll', fadeScroll, { passive: true });
+    window.addEventListener('scroll', fadeScroll, { passive: true 
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
     fadeScroll();
   }
 
@@ -136,10 +961,160 @@ document.addEventListener('DOMContentLoaded', () => {
       const scrollY = window.scrollY;
       parallaxSlow.forEach(el => {
         el.style.transform = `translateY(${scrollY * 0.15}px)`;
-      });
+      
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
       parallaxFast.forEach(el => {
         el.style.transform = `translateY(${scrollY * -0.08}px)`;
-      });
+      
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
       parallaxTicking = false;
     }
 
@@ -148,7 +1123,82 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(updateParallax);
         parallaxTicking = true;
       }
-    }, { passive: true });
+    }, { passive: true 
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
   }
 
   /* --------------------------------------------------------
@@ -165,11 +1215,236 @@ document.addEventListener('DOMContentLoaded', () => {
       const rotateX = ((y - centerY) / centerY) * -6;
       const rotateY = ((x - centerX) / centerX) * 6;
       card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    });
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
     card.addEventListener('mouseleave', () => {
       card.style.transform = 'perspective(800px) rotateX(0) rotateY(0)';
-    });
-  });
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
+  
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
 
   /* --------------------------------------------------------
      8. MAGNETIC BUTTONS
@@ -181,11 +1456,236 @@ document.addEventListener('DOMContentLoaded', () => {
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
       btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
-    });
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
     btn.addEventListener('mouseleave', () => {
       btn.style.transform = 'translate(0, 0)';
-    });
-  });
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
+  
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
 
   /* --------------------------------------------------------
      9. COUNT-UP ANIMATION
@@ -209,11 +1709,236 @@ document.addEventListener('DOMContentLoaded', () => {
           requestAnimationFrame(step);
           countObserver.unobserve(el);
         }
-      });
-    }, { threshold: 0.5 });
+      
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
+    }, { threshold: 0.5 
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
 
     countObserver.observe(el);
-  });
+  
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
 
   /* --------------------------------------------------------
      10. TERMINAL TYPING ANIMATION
@@ -285,7 +2010,82 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
-    });
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
@@ -300,7 +2100,82 @@ document.addEventListener('DOMContentLoaded', () => {
     const screenGeo = new THREE.BoxGeometry(2.8, 1.8, 0.08);
     const screenMat = new THREE.MeshBasicMaterial({
       color: 0x111315, transparent: true, opacity: 0.9,
-    });
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
     const screen = new THREE.Mesh(screenGeo, screenMat);
     monitorGroup.add(screen);
 
@@ -315,7 +2190,82 @@ document.addEventListener('DOMContentLoaded', () => {
     const glowGeo = new THREE.PlaneGeometry(2.6, 1.6);
     const glowMat = new THREE.MeshBasicMaterial({
       color: 0xf97316, transparent: true, opacity: 0.04,
-    });
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
     const glow = new THREE.Mesh(glowGeo, glowMat);
     glow.position.z = 0.05;
     monitorGroup.add(glow);
@@ -328,7 +2278,82 @@ document.addEventListener('DOMContentLoaded', () => {
         color: i % 3 === 0 ? 0xf97316 : 0x6b7280,
         transparent: true,
         opacity: 0.25 + Math.random() * 0.3,
-      });
+      
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
       const line = new THREE.Mesh(lineGeo, lineMat);
       line.position.set(-1.1 + lineWidth / 2, 0.6 - i * 0.18, 0.05);
       monitorGroup.add(line);
@@ -336,13 +2361,163 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Stand
     const neckGeo = new THREE.BoxGeometry(0.12, 0.5, 0.08);
-    const neckMat = new THREE.MeshBasicMaterial({ color: 0x1a1d21 });
+    const neckMat = new THREE.MeshBasicMaterial({ color: 0x1a1d21 
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
     const neck = new THREE.Mesh(neckGeo, neckMat);
     neck.position.set(0, -1.15, 0);
     monitorGroup.add(neck);
 
     const baseGeo = new THREE.BoxGeometry(1.0, 0.06, 0.5);
-    const baseMat = new THREE.MeshBasicMaterial({ color: 0x1a1d21 });
+    const baseMat = new THREE.MeshBasicMaterial({ color: 0x1a1d21 
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
     const base = new THREE.Mesh(baseGeo, baseMat);
     base.position.set(0, -1.43, 0);
     monitorGroup.add(base);
@@ -370,7 +2545,82 @@ document.addEventListener('DOMContentLoaded', () => {
     particlesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const particlesMat = new THREE.PointsMaterial({
       color: 0xf97316, size: 0.02, transparent: true, opacity: 0.5,
-    });
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
     const particles = new THREE.Points(particlesGeo, particlesMat);
     scene.add(particles);
 
@@ -380,7 +2630,82 @@ document.addEventListener('DOMContentLoaded', () => {
       const rect = container.getBoundingClientRect();
       mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
       mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-    });
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
 
     // --- Animation loop ---
     const clock = new THREE.Clock();
@@ -421,9 +2746,309 @@ document.addEventListener('DOMContentLoaded', () => {
       const target = document.querySelector(id);
       if (target) {
         e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' 
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
       }
-    });
-  });
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
+      }
+    
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
+  
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
+
+});
+
+
+  /* --------------------------------------------------------
+     13. WHIS TERMINAL ANIMATION
+     -------------------------------------------------------- */
+  const whisLogs = document.getElementById("whis-logs");
+  if (whisLogs) {
+    const logs = [
+      { text: "> Initializing SystemAgent...", color: "var(--muted)", delay: 500 },
+      { text: "> Loading Llama 3.1 local weights [4.7GB]...", color: "var(--muted)", delay: 800 },
+      { text: "> [Router] System online. Listening on port 8080.", color: "var(--bone)", delay: 600 },
+      { text: "User: \"Summarize the active docker containers.\"", color: "var(--bone)", delay: 1500 },
+      { text: "> [Router] Intent recognized. Dispatching to SystemAgent.", color: "var(--muted)", delay: 500 },
+      { text: "> [SystemAgent] Executing `docker ps --format '{{.Names}}'`", color: "var(--muted)", delay: 600 },
+      { text: "> [SystemAgent] 3 active containers found.", color: "var(--muted)", delay: 800 },
+      { text: "WHIS: \"You currently have 3 active containers running: postgres-db, redis-cache, and nginx-proxy.\"", color: "var(--ember)", delay: 1000, type: true }
+    ];
+
+    let currentLog = 0;
+    
+    function appendNextLog() {
+      if (currentLog >= logs.length) return;
+      
+      const logData = logs[currentLog];
+      const div = document.createElement("div");
+      div.style.color = logData.color;
+      div.style.opacity = "0";
+      div.style.transform = "translateY(10px)";
+      div.style.transition = "all 0.3s ease";
+      
+      if (logData.type) {
+        whisLogs.appendChild(div);
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        let charIdx = 0;
+        function typeChar() {
+          if (charIdx < logData.text.length) {
+            div.textContent = logData.text.substring(0, charIdx + 1) + "█";
+            charIdx++;
+            setTimeout(typeChar, 25);
+          } else {
+            div.textContent = logData.text; 
+            setTimeout(resetAnimation, 6000); 
+          }
+        }
+        typeChar();
+      } else {
+        div.textContent = logData.text;
+        whisLogs.appendChild(div);
+        
+        void div.offsetWidth;
+        div.style.opacity = "1";
+        div.style.transform = "translateY(0)";
+        
+        currentLog++;
+        setTimeout(appendNextLog, logData.delay);
+      }
+    }
+    
+    function resetAnimation() {
+      whisLogs.innerHTML = "";
+      currentLog = 0;
+      setTimeout(appendNextLog, 500);
+    }
+    
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        resetAnimation();
+        observer.disconnect();
+      }
+    }, { threshold: 0.2 });
+    
+    observer.observe(whisLogs);
+  }
 
 });
