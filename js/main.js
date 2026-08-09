@@ -253,43 +253,93 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Floating wireframe computer monitor ---
     const monitorGroup = new THREE.Group();
 
-    // Screen
-    const screenGeo = new THREE.BoxGeometry(2.8, 1.8, 0.08);
-    const screenMat = new THREE.MeshBasicMaterial({
-      color: 0x111315, transparent: true, opacity: 0.9,
-    });
-    const screen = new THREE.Mesh(screenGeo, screenMat);
-    monitorGroup.add(screen);
+    // --- Dynamic 2D Canvas Terminal ---
+    const termCanvas = document.createElement("canvas");
+    termCanvas.width = 512;
+    termCanvas.height = 256;
+    const termCtx = termCanvas.getContext("2d");
+    const termTex = new THREE.CanvasTexture(termCanvas);
+    termTex.magFilter = THREE.LinearFilter;
+    termTex.minFilter = THREE.LinearFilter;
 
-    // Screen wireframe border
-    const screenWire = new THREE.LineSegments(
-      new THREE.EdgesGeometry(screenGeo),
-      new THREE.LineBasicMaterial({ color: 0xf97316, transparent: true, opacity: 0.5 })
-    );
-    monitorGroup.add(screenWire);
-
-    // Screen inner glow
-    const glowGeo = new THREE.PlaneGeometry(2.6, 1.6);
-    const glowMat = new THREE.MeshBasicMaterial({
-      color: 0xf97316, transparent: true, opacity: 0.04,
-    });
-    const glow = new THREE.Mesh(glowGeo, glowMat);
-    glow.position.z = 0.05;
-    monitorGroup.add(glow);
-
-    // Fake code lines
-    for (let i = 0; i < 8; i++) {
-      const lineWidth = 0.4 + Math.random() * 1.6;
-      const lineGeo = new THREE.PlaneGeometry(lineWidth, 0.04);
-      const lineMat = new THREE.MeshBasicMaterial({
-        color: i % 3 === 0 ? 0xf97316 : 0x6b7280,
-        transparent: true,
-        opacity: 0.25 + Math.random() * 0.3,
-      });
-      const line = new THREE.Mesh(lineGeo, lineMat);
-      line.position.set(-1.1 + lineWidth / 2, 0.6 - i * 0.18, 0.05);
-      monitorGroup.add(line);
+    const tLines = [
+      "kernel_boot --secure",
+      "> Initializing autonomous subroutines...",
+      "> Allocating shared memory [2048MB]",
+      "> Fetching embedded artifacts...",
+      "> Synching distributed state...",
+      "> Establishing secure channels...",
+      "> Routing traffic to local enclave...",
+      "> System nominal. Ready."
+    ];
+    let currentTLine = 0;
+    let currentChar = 0;
+    let typedText = [];
+    
+    function drawTerminal() {
+      termCtx.fillStyle = "#0b0d0f";
+      termCtx.fillRect(0, 0, 512, 256);
+      termCtx.font = "20px monospace";
+      
+      let y = 30;
+      for (let i = 0; i < typedText.length; i++) {
+         if (i === typedText.length - 1 && currentTLine >= tLines.length) {
+            termCtx.fillStyle = "#f97316"; 
+         } else if (i === typedText.length - 1) {
+            termCtx.fillStyle = "#f4f4f5"; 
+         } else {
+            termCtx.fillStyle = "#6b7280"; 
+         }
+         termCtx.fillText(typedText[i], 20, y);
+         y += 28;
+      }
+      termTex.needsUpdate = true;
     }
+    
+    function typeTerminal() {
+       if (currentTLine >= tLines.length) {
+          setTimeout(() => {
+             currentTLine = 0;
+             currentChar = 0;
+             typedText = [];
+             typeTerminal();
+          }, 3000);
+          return;
+       }
+       
+       const line = tLines[currentTLine];
+       if (currentChar === 0) {
+          typedText.push("");
+       }
+       
+       typedText[currentTLine] = line.substring(0, currentChar + 1) + "█";
+       drawTerminal();
+       
+       currentChar++;
+       if (currentChar <= line.length) {
+          setTimeout(typeTerminal, 25);
+       } else {
+          typedText[currentTLine] = line; 
+          drawTerminal();
+          currentTLine++;
+          currentChar = 0;
+          setTimeout(typeTerminal, 300);
+       }
+    }
+    typeTerminal();
+
+    // Screen Box
+    const screenGeo = new THREE.BoxGeometry(2.8, 1.8, 0.08);
+    const screenMat = new THREE.MeshBasicMaterial({ color: 0x111315, transparent: true, opacity: 0.9 });
+    const screenBox = new THREE.Mesh(screenGeo, screenMat);
+    monitorGroup.add(screenBox);
+
+    // Terminal Screen Plane (Front Face)
+    const termPlaneGeo = new THREE.PlaneGeometry(2.7, 1.7);
+    const termPlaneMat = new THREE.MeshBasicMaterial({ map: termTex, transparent: true, opacity: 0.95 });
+    const termPlane = new THREE.Mesh(termPlaneGeo, termPlaneMat);
+    termPlane.position.z = 0.045; 
+    monitorGroup.add(termPlane);
 
     // Stand
     const neckGeo = new THREE.BoxGeometry(0.12, 0.5, 0.08);
